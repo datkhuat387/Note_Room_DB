@@ -5,24 +5,27 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 
 import com.example.note_room_db.adapter.NoteAdapter;
+import com.example.note_room_db.repository.NoteRepository;
 import com.example.note_room_db.dao.NoteDAO;
 import com.example.note_room_db.db.NoteDB;
 import com.example.note_room_db.model.Note;
+import com.example.note_room_db.note.AddNoteActivity;
+import com.example.note_room_db.note.NoteView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements NoteView {
     private RecyclerView rcv_list_note;
     private ImageView img_add;
     private NoteAdapter noteAdapter;
     private NoteDAO noteDAO;
+    private NoteRepository noteRepository;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,38 +36,40 @@ public class MainActivity extends AppCompatActivity {
         img_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, AddNoteActivity.class);
-                startActivity(intent);
+                noteRepository.onAddNoteClicked();
             }
         });
 
         rcv_list_note.setLayoutManager(new LinearLayoutManager(this));
         noteAdapter = new NoteAdapter(new ArrayList<>());
         rcv_list_note.setAdapter(noteAdapter);
-        NoteDB noteDB = NoteDB.getInstance(this);
-        noteDAO = noteDB.noteDAO();
-        loadNotes();
+
+        NoteDAO noteDAO = NoteDB.getInstance(this).noteDAO();
+        noteRepository = new NoteRepository(this, noteDAO);
+        noteRepository.loadNotes();
+    }
+    public void showNotes(List<Note> notes) {
+        noteAdapter.setNotes(notes);
+    }
+
+    @Override
+    public void showNoteAdded() {
 
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        loadNotes();
+        noteRepository.loadNotes();
+    }
+    @Override
+    public void startAddNoteActivity() {
+        Intent intent = new Intent(this, AddNoteActivity.class);
+        startActivity(intent);
     }
 
-    private void loadNotes() {
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                List<Note> notes = noteDAO.getAllNote();
-                runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        noteAdapter.setNotes(notes);
-                    }
-                });
-            }
-        });
+    @Override
+    public void showToastCheck() {
+
     }
 }
