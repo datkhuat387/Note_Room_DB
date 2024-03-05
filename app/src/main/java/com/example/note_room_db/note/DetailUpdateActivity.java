@@ -1,8 +1,10 @@
-package com.example.note_room_db;
+package com.example.note_room_db.note;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.example.note_room_db.R;
 
 public class DetailUpdateActivity extends AppCompatActivity {
 

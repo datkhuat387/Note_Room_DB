@@ -13,10 +13,10 @@
         android:theme="@style/Theme.Note_Room_DB"
         tools:targetApi="31">
         <activity
-            android:name=".DetailUpdateActivity"
+            android:name=".note.DetailUpdateActivity"
             android:exported="false" />
         <activity
-            android:name=".AddNoteActivity"
+            android:name=".note.AddNoteActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
