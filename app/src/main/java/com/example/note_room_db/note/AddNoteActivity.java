@@ -3,6 +3,8 @@ package com.example.note_room_db.note;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -33,32 +35,23 @@ public class AddNoteActivity extends AppCompatActivity implements NoteView{
 
         noteDB = NoteDB.getInstance(this);
         noteRepository = new NoteRepository(this, noteDB.noteDAO());
-        tv_save.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final String title = edt_title.getText().toString().trim();
-                final String content = edt_content.getText().toString().trim();
 
-                noteRepository.addNote(title,content);
-            }
+        tv_save.setOnClickListener(view -> {
+            final String title = edt_title.getText().toString().trim();
+            final String content = edt_content.getText().toString().trim();
+            noteRepository.addNote(title,content);
         });
-        img_back.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish();
-            }
+        img_back.setOnClickListener(view -> {
+            finish();
         });
     }
-    @Override
-    public void showNotes(List<Note> notes) {
-
-    }
-
     @Override
     public void showNoteAdded() {
-        Toast.makeText(this, "Note saved", Toast.LENGTH_SHORT).show();
-        edt_title.setText("");
-        edt_content.setText("");
+        runOnUiThread(() -> {
+            Toast.makeText(AddNoteActivity.this, "Note added", Toast.LENGTH_SHORT).show();
+            edt_title.setText("");
+            edt_content.setText("");
+        });
     }
     @Override
     public void showToastCheck() {
@@ -66,8 +59,8 @@ public class AddNoteActivity extends AppCompatActivity implements NoteView{
     }
 
     @Override
-    public void startAddNoteActivity() {
-
-    }
+    public void startAddNoteActivity() {}
+    @Override
+    public void showNotes(List<Note> notes) {}
 
 }
