@@ -33,13 +33,9 @@ public class MainActivity extends AppCompatActivity implements NoteView {
         rcv_list_note = findViewById(R.id.rcv_list_note);
         img_add = findViewById(R.id.img_add);
 
-        img_add.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                noteRepository.onAddNoteClicked();
-            }
+        img_add.setOnClickListener(view -> {
+            noteRepository.onAddNoteClicked();
         });
-
         rcv_list_note.setLayoutManager(new LinearLayoutManager(this));
         noteAdapter = new NoteAdapter(new ArrayList<>());
         rcv_list_note.setAdapter(noteAdapter);
@@ -50,11 +46,6 @@ public class MainActivity extends AppCompatActivity implements NoteView {
     }
     public void showNotes(List<Note> notes) {
         noteAdapter.setNotes(notes);
-    }
-
-    @Override
-    public void showNoteAdded() {
-
     }
 
     @Override
@@ -69,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements NoteView {
     }
 
     @Override
-    public void showToastCheck() {
-
-    }
+    public void showToastCheck() {}
+    @Override
+    public void showNoteAdded() {}
 }

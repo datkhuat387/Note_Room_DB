@@ -9,29 +9,28 @@ import com.example.note_room_db.dao.NoteDAO;
 import com.example.note_room_db.model.Note;
 
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 public class NoteRepository {
     private NoteView noteView;
     private NoteDAO noteDAO;
+    private Executor executor;
 
     public NoteRepository(NoteView noteView, NoteDAO noteDAO) {
         this.noteView = noteView;
         this.noteDAO = noteDAO;
+        this.executor = Executors.newSingleThreadExecutor();
     }
     public void loadNotes() {
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                final List<Note> notes = noteDAO.getAllNote();
-
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    noteView.showNotes(notes);
-                    }
-                });
-            }
+        executor.execute(() -> {
+            List<Note> notes = noteDAO.getAllNote();
+            postNotesToMainThread(notes);
+        });
+    }
+    private void postNotesToMainThread(List<Note> notes) {
+        new Handler(Looper.getMainLooper()).post(() -> {
+            noteView.showNotes(notes);
         });
     }
     public void addNote(String title, String content) {
@@ -39,20 +38,11 @@ public class NoteRepository {
             noteView.showToastCheck();
             return;
         }
-        AsyncTask.execute(new Runnable() {
-            @Override
-            public void run() {
-                Note note = new Note(title, content);
-                noteDAO.insert(note);
 
-                Handler handler = new Handler(Looper.getMainLooper());
-                handler.post(new Runnable() {
-                    @Override
-                    public void run() {
-                        noteView.showNoteAdded();
-                    }
-                });
-            }
+        executor.execute(() -> {
+            Note note = new Note(title, content);
+            noteDAO.insert(note);
+            noteView.showNoteAdded();
         });
     }
 
