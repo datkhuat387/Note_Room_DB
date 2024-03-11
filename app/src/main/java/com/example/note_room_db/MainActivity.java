@@ -36,6 +36,7 @@ public class MainActivity extends AppCompatActivity implements NoteView {
         img_add.setOnClickListener(view -> {
             noteRepository.onAddNoteClicked();
         });
+
         rcv_list_note.setLayoutManager(new LinearLayoutManager(this));
         noteAdapter = new NoteAdapter(new ArrayList<>());
         rcv_list_note.setAdapter(noteAdapter);
@@ -43,6 +44,9 @@ public class MainActivity extends AppCompatActivity implements NoteView {
         NoteDAO noteDAO = NoteDB.getInstance(this).noteDAO();
         noteRepository = new NoteRepository(this, noteDAO);
         noteRepository.loadNotes();
+        noteAdapter.setOnNoteDeleteListener(note -> {
+            noteRepository.deleteNote(note);
+        });
     }
     public void showNotes(List<Note> notes) {
         noteAdapter.setNotes(notes);
