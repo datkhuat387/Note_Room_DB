@@ -45,7 +45,12 @@ public class NoteRepository {
             noteView.showNoteAdded();
         });
     }
-
+    public void deleteNote(Note note) {
+        executor.execute(() -> {
+            noteDAO.delete(note);
+            loadNotes();
+        });
+    }
     public void onAddNoteClicked() {
         noteView.startAddNoteActivity();
     }
